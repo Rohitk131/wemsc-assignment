@@ -19,3 +19,23 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+@font-face {
+  font-family: 'hemingVariable';
+  src: url('/fonts/CircularSpotify.otf') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'hemingVariable Fallback';
+  src: local("Arial");
+  ascent-override: 65.29%;
+  descent-override: 16.99%;
+  line-gap-override: 8.94%;
+  size-adjust: 111.80%;
+}
+
+.custom-font {
+  font-family: 'hemingVariable', 'hemingVariable Fallback', sans-serif;
+}

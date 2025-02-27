@@ -1,5 +1,6 @@
 'use client'
 import LeftSidebar from '@/components/LeftSidebar';
+import RightSidebar from '@/components/RightSidebar';
 import React from 'react'
 
 const MusicApp = () => {
@@ -21,7 +22,7 @@ const MusicApp = () => {
         
         {/* Right Sidebar */}
         <div className="w-64 bg-black p-6 border-l border-gray-800 hidden lg:block">
-         
+         <RightSidebar/>
         </div>
       </div>
       

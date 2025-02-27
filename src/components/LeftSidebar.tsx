@@ -10,10 +10,9 @@ const playlists = [
 function LeftSidebar() {
     return (
         <div>
-            <div className="flex items-center mb-8">
-                <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-500 rounded-full flex items-center justify-center text-xl font-bold">
-                    W
-                </div>
+            <div className="flex items-center mb-8 gap-2">
+               <img src='main-logo.svg' className='w-14 h-14'></img>
+               <h1 className='font-semibold text-2xl custom-font'>Wemsc</h1>
                 <div className="ml-4">
                     <Menu className="cursor-pointer" />
                 </div>
