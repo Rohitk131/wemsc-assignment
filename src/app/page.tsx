@@ -1,4 +1,5 @@
 'use client'
+import LeftSidebar from '@/components/LeftSidebar';
 import React from 'react'
 
 const MusicApp = () => {
@@ -9,7 +10,7 @@ const MusicApp = () => {
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar */}
         <div className="w-56 bg-black p-6 hidden md:flex flex-col">
-        
+          <LeftSidebar/>
         </div>
         
         {/* Main Content */}
@@ -27,11 +28,8 @@ const MusicApp = () => {
       {/* Player Controls */}
       <div className="h-16 md:h-20 bg-gray-900 border-t border-gray-800 px-4 flex items-center">
        
-        
-   
       </div>
-      
-     
+
     </div>
   );
 };
