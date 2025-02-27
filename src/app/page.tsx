@@ -10,9 +10,9 @@ const MusicApp = () => {
       {/* Main container */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar */}
-        <div className="w-56 bg-black p-6 hidden md:flex flex-col">
+       
           <LeftSidebar/>
-        </div>
+   
         
         {/* Main Content */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-b from-gray-900 to-black">
