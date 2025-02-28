@@ -3,19 +3,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 
 const todaysHits = [
-  { id: 1, title: "Today's Hot Hits", description: "The most played tracks right now", image: "/api/placeholder/200/200" },
-  { id: 2, title: "Land of Rising Sun", description: "By Woilon", image: "/api/placeholder/200/200" },
-  { id: 3, title: "赤", description: "バンド", image: "/api/placeholder/200/200" },
-  { id: 4, title: "Tickets to My Downfall", description: "Machine Gun Kelly", image: "/api/placeholder/200/200" },
+  { id: 1, title: "Aaj Ki Raat", description: "From Stree 2 - Sachin-Jigar", image: "/api/placeholder/200/200" },
+  { id: 2, title: "Tauba Tauba", description: "From Bad Newz - Karan Aujla", image: "/api/placeholder/200/200" },
+  { id: 3, title: "Mere Dholna 3.0", description: "From Bhool Bhulaiyaa 3 - Sonu Nigam", image: "/api/placeholder/200/200" },
+  { id: 4, title: "Chal Kudiye", description: "Diljit Dosanjh ft. Badshah", image: "/api/placeholder/200/200" },
 ];
 
 const newReleases = [
-  { id: 1, title: "MAINSTREAM SELLOUT", artist: "MGK", image: "/api/placeholder/150/150" },
-  { id: 2, title: "INVU", artist: "Taeyeon", image: "/api/placeholder/150/150" },
-  { id: 3, title: "Stay Alive", artist: "Jung Kook", image: "/api/placeholder/150/150" },
-  { id: 4, title: "Step Back", artist: "GOT", image: "/api/placeholder/150/150" },
+  { id: 1, title: "Khoobsurat", artist: "Vishal Mishra", image: "/api/placeholder/150/150" },
+  { id: 2, title: "Sajni", artist: "Arijit Singh", image: "/api/placeholder/150/150" },
+  { id: 3, title: "Millionaire", artist: "Yo Yo Honey Singh", image: "/api/placeholder/150/150" },
+  { id: 4, title: "Jo Tum Mere Ho", artist: "Anuv Jain", image: "/api/placeholder/150/150" },
 ];
-
 const MainSection = () => {
   return (
     <motion.div
