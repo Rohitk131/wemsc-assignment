@@ -84,12 +84,25 @@ const Player = () => {
   };
 
   const updateTimelinePosition = (e) => {
+    if (!timelineRef.current) return;
+    
     const rect = timelineRef.current.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const width = rect.width;
     const newTime = Math.min(Math.max((clickX / width) * duration, 0), duration);
-    audioRef.current.currentTime = newTime;
+    
+    // Set the current time first
     setCurrentTime(newTime);
+    
+    // Then update the audio time
+    if (audioRef.current) {
+      audioRef.current.currentTime = newTime;
+      
+      // If we were playing before, continue playing
+      if (isPlaying) {
+        audioRef.current.play().catch(error => console.error("Error playing audio:", error));
+      }
+    }
   };
 
   const handleVolumeMouseDown = (e) => {
@@ -110,11 +123,24 @@ const Player = () => {
   };
 
   const updateVolumePosition = (e) => {
+    if (!volumeRef.current) return;
+    
     const rect = volumeRef.current.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const width = rect.width;
-    const newVolume = Math.min(Math.max((clickX / width) * 100, 0), 100);
-    setVolume(newVolume);
+    
+    // For desktop: horizontal slider
+    if (window.innerWidth >= 768) {
+      const clickX = e.clientX - rect.left;
+      const width = rect.width;
+      const newVolume = Math.min(Math.max((clickX / width) * 100, 0), 100);
+      setVolume(newVolume);
+    } 
+    // For mobile: vertical slider
+    else {
+      const clickY = e.clientY - rect.top;
+      const height = rect.height;
+      const newVolume = 100 - Math.min(Math.max((clickY / height) * 100, 0), 100);
+      setVolume(newVolume);
+    }
   };
 
   
@@ -149,13 +175,13 @@ const Player = () => {
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 100 }}
-      className="fixed bottom-0 left-0 right-0 h-20 rounded-t-2xl bg-gradient-to-r from-gray-900 via-black to-gray-900 border-t border-gray-800/50 px-6 flex items-center shadow-lg z-50"
+      className="fixed bottom-0 left-0 right-0 h-20 rounded-t-2xl bg-gradient-to-r from-gray-900 via-black to-gray-900 border-t border-gray-800/50 px-2 md:px-6 flex items-center shadow-lg z-50"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Track Info */}
       <motion.div
-        className="flex items-center w-1/4"
+        className="flex items-center w-1/4 min-w-[100px]"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2 }}
@@ -163,7 +189,7 @@ const Player = () => {
         <img
           src="https://i.scdn.co/image/ab67616d00004851e34f05599c4a42e1cbb1c251"
           alt="Current track"
-          className="h-12 w-12 object-cover rounded-lg shadow-md"
+          className="h-10 w-10 md:h-12 md:w-12 object-cover rounded-lg shadow-md"
         />
         <div className="ml-4 hidden md:block">
           <motion.div
@@ -174,7 +200,7 @@ const Player = () => {
           </motion.div>
           <div className="text-xs text-gray-400">Karan Aujla</div>
         </div>
-        <div className="flex items-center ml-4 gap-3">
+        <div className="flex items-center ml-4 gap-3 hidden md:flex">
           <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
             <Heart size={18} className="text-gray-400 hover:text-pink-500 cursor-pointer transition-colors" />
           </motion.div>
@@ -187,22 +213,22 @@ const Player = () => {
       {/* Playback Controls */}
       <div className="flex-1 flex flex-col items-center justify-center">
         <motion.div
-          className="flex items-center gap-6"
+          className="flex items-center gap-2 md:gap-6"
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
+          <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }} className="hidden md:block">
             <Shuffle size={18} className="text-gray-400 hover:text-white cursor-pointer" />
           </motion.div>
           <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }} onClick={skipBackward}>
-            <SkipBack size={18} className="text-gray-400 hover:text-white cursor-pointer" />
+            <SkipBack className="text-gray-400 hover:text-white cursor-pointer w-4 h-4 md:w-[18px] md:h-[18px]" />
           </motion.div>
           <motion.button
             whileHover={{ scale: 1.1, rotate: 360 }}
             whileTap={{ scale: 0.9 }}
             onClick={togglePlay}
-            className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center shadow-lg"
+            className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center shadow-lg"
           >
             <AnimatePresence mode="wait">
               {isPlaying ? (
@@ -212,7 +238,7 @@ const Player = () => {
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <Pause size={20} />
+                  <Pause className="w-4 h-4 md:w-5 md:h-5" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -221,15 +247,15 @@ const Player = () => {
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <Play size={20} className="ml-0.5" />
+                  <Play className="w-4 h-4 md:w-5 md:h-5 ml-0.5" />
                 </motion.div>
               )}
             </AnimatePresence>
           </motion.button>
           <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }} onClick={skipForward}>
-            <SkipForward size={18} className="text-gray-400 hover:text-white cursor-pointer" />
+            <SkipForward className="text-gray-400 hover:text-white cursor-pointer w-4 h-4 md:w-[18px] md:h-[18px]" />
           </motion.div>
-          <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
+          <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }} className="hidden md:block">
             <Repeat size={18} className="text-gray-400 hover:text-white cursor-pointer" />
           </motion.div>
         </motion.div>
@@ -240,10 +266,10 @@ const Player = () => {
           animate={{ opacity: isHovered ? 1 : 0.7 }}
           transition={{ duration: 0.2 }}
         >
-          <span className="text-xs text-gray-300 w-10 text-right">{formatTime(currentTime)}</span>
+          <span className="text-[10px] md:text-xs text-gray-300 w-8 md:w-10 text-right">{formatTime(currentTime)}</span>
           <div
             ref={timelineRef}
-            className="mx-3 flex-1 group relative cursor-pointer"
+            className="mx-2 md:mx-3 flex-1 group relative cursor-pointer"
             onMouseDown={handleTimelineMouseDown}
           >
             <motion.div
@@ -265,28 +291,34 @@ const Player = () => {
               </motion.div>
             </motion.div>
           </div>
-          <span className="text-xs text-gray-300 w-10">{formatTime(duration)}</span>
+          <span className="text-[10px] md:text-xs text-gray-300 w-8 md:w-10">{formatTime(duration)}</span>
         </motion.div>
       </div>
 
       {/* Volume & Maximize */}
       <motion.div
-        className="w-1/4 flex items-center justify-end gap-4"
+        className="w-1/4 min-w-[60px] flex items-center justify-end gap-2 md:gap-4"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2 }}
       >
         <div className="flex items-center gap-2">
-          <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
-            <Volume2 size={18} className="text-gray-400" />
-          </motion.div>
-          <motion.div
-            ref={volumeRef}
-            className="w-24 hidden md:block relative cursor-pointer"
-            onMouseDown={handleVolumeMouseDown}
-            whileHover={{ scale: 1.05 }}
+          <motion.div 
+            whileHover={{ scale: 1.2 }} 
+            whileTap={{ scale: 0.9 }}
+            className="relative flex items-center gap-2"
           >
-            <div className="h-1 bg-gray-700/50 rounded-full overflow-hidden">
+            <Volume2 
+              className="text-gray-400 w-4 h-4 md:w-[18px] md:h-[18px] cursor-pointer" 
+              onClick={() => setVolume(volume === 0 ? 70 : 0)}
+            />
+            {/* Desktop Volume Slider */}
+            <motion.div
+              ref={volumeRef}
+              className="hidden md:block w-20 h-1.5 bg-gray-700/50 rounded-full overflow-hidden relative cursor-pointer"
+              onMouseDown={handleVolumeMouseDown}
+
+            >
               <motion.div
                 className="absolute left-0 top-0 bottom-0 bg-blue-500 rounded-full"
                 style={{ width: `${volume}%` }}
@@ -298,10 +330,20 @@ const Player = () => {
                   transition={{ duration: 0.2 }}
                 />
               </motion.div>
+            </motion.div>
+
+            {/* Mobile Volume Popup */}
+            <div className="md:hidden absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-gray-900/95 rounded-lg shadow-lg hidden group-active:block">
+              <div className="h-24 w-2 bg-gray-700/50 rounded-full overflow-hidden relative cursor-pointer">
+                <div 
+                  className="absolute bottom-0 left-0 right-0 bg-blue-500 rounded-full"
+                  style={{ height: `${volume}%` }}
+                />
+              </div>
             </div>
           </motion.div>
         </div>
-        <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
+        <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }} className="hidden md:block">
           <Maximize2 size={18} className="text-gray-400 hover:text-white cursor-pointer" />
         </motion.div>
       </motion.div>

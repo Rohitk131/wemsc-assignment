@@ -70,12 +70,12 @@ function RightSidebar() {
         <div className="flex items-center">
           <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">
             <img 
-              src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=40&h=40&fit=crop" 
+              src="https://cdn-icons-png.flaticon.com/512/4322/4322991.png" 
               alt="Profile" 
               className="w-full h-full object-cover"
             />
           </div>
-          <span className="ml-2 font-medium text-white">Timothy Luca</span>
+          <span className="ml-2 font-semibold text-xl text-white">Rohit</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-8 h-8 flex items-center justify-center cursor-pointer text-gray-400 hover:text-white transition-colors">

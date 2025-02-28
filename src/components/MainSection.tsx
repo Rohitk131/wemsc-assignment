@@ -100,7 +100,7 @@ const MainSection = () => {
       </motion.div>
 
   
-      <Section title="Hello, Luca" items={todaysHits} />
+      <Section title="Hello, Rohit" items={todaysHits} />
 
       <Section title="New Releases for You" items={newReleases} />
     </motion.div>
