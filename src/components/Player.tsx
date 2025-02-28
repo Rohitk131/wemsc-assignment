@@ -13,11 +13,12 @@ const Player = () => {
   const [isDraggingTimeline, setIsDraggingTimeline] = useState(false);
   const [isDraggingVolume, setIsDraggingVolume] = useState(false);
 
-  const audioRef = useRef<HTMLAudioElement>(new Audio(AUDIO_URL));
+  const audioRef = useRef<HTMLAudioElement | null>(typeof window !== 'undefined' ? new Audio(AUDIO_URL) : null);
   const timelineRef = useRef<HTMLDivElement>(null);
   const volumeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!audioRef.current) return;
     const audio = audioRef.current;
     audio.volume = volume / 100;
 
@@ -43,6 +44,7 @@ const Player = () => {
   }, [isDraggingTimeline]);
 
   useEffect(() => {
+    if (!audioRef.current) return;
     const audio = audioRef.current;
     if (isPlaying && audio.paused) {
       audio.play().catch(error => console.error("Error playing audio:", error));
@@ -52,7 +54,9 @@ const Player = () => {
   }, [isPlaying]);
 
   useEffect(() => {
-    audioRef.current.volume = volume / 100;
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100;
+    }
   }, [volume]);
 
   const formatTime = (seconds: number) => {
@@ -148,15 +152,19 @@ const Player = () => {
   }, [isDraggingTimeline, isDraggingVolume]);
 
   const skipForward = () => {
-    const newTime = Math.min(audioRef.current.currentTime + 10, duration);
-    audioRef.current.currentTime = newTime;
-    setCurrentTime(newTime);
+    if (audioRef.current) {
+      const newTime = Math.min(audioRef.current.currentTime + 10, duration);
+      audioRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+    }
   };
 
   const skipBackward = () => {
-    const newTime = Math.max(audioRef.current.currentTime - 10, 0);
-    audioRef.current.currentTime = newTime;
-    setCurrentTime(newTime);
+    if (audioRef.current) {
+      const newTime = Math.max(audioRef.current.currentTime - 10, 0);
+      audioRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+    }
   };
 
   return (
