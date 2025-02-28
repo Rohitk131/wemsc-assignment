@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { Home, ChevronLeft, ChevronRight, Download, Star, File, Compass } from 'lucide-react';
 import Playlist01Icon from '../../public/Icons/playlistIcon';
-
 import { motion, AnimatePresence } from 'framer-motion';
-
-
 
 function LeftSidebar() {
     const [isExpanded, setIsExpanded] = useState(true);
@@ -12,6 +9,7 @@ function LeftSidebar() {
     const toggleSidebar = () => {
         setIsExpanded(!isExpanded);
     };
+
     const sidebarVariants = {
         expanded: { width: "14rem", transition: { duration: 0.4, ease: "easeInOut" } },
         collapsed: { width: "5.5rem", transition: { duration: 0.4, ease: "easeInOut" } }
@@ -31,62 +29,48 @@ function LeftSidebar() {
         { title: "Local Files", icon: <File size={22} />, active: false, section: "LIBRARY" },
     ];
 
-
     const headerVariants = {
         expanded: {
             opacity: 1,
             x: 0,
-            transition: {
-                delay: 0.1,
-                duration: 0.2
-            }
+            transition: { delay: 0.1, duration: 0.2 }
         },
         collapsed: {
             opacity: 0,
             x: -10,
-            transition: {
-                duration: 0.1
-            }
+            transition: { duration: 0.1 }
         }
     };
 
     const iconContainerVariants = {
         expanded: {
             width: "auto",
-            transition: {
-                type: "spring",
-                stiffness: 300,
-                damping: 30
-            }
+            transition: { type: "spring", stiffness: 300, damping: 30 }
         },
         collapsed: {
-            width: "300%",
+            width: "100%", // Adjusted from "300%" to fit better
             display: "flex",
             justifyContent: "center",
-            transition: {
-                type: "spring",
-                stiffness: 300,
-                damping: 30
-            }
+            transition: { type: "spring", stiffness: 300, damping: 30 }
         }
     };
 
-  
-
     return (
         <motion.div
-            className="bg-black p-6 hidden md:flex flex-col relative overflow-hidden "
+            className="bg-black p-6 hidden md:flex flex-col relative" // Removed overflow-hidden
             variants={sidebarVariants}
             initial="expanded"
             animate={isExpanded ? "expanded" : "collapsed"}
         >
-         
+            {/* Header */}
             <div className="flex items-center mb-8 gap-3">
-                <motion.img src='main-logo.svg' className='w-10 h-10' animate={{ scale: isExpanded ? 1 : 1.1 }} />
-                <motion.h1 className='font-bold text-2xl' variants={textVariants}>{isExpanded && "Wemsc"}</motion.h1>
+                <motion.img src="/main-logo.svg" className="w-10 h-10" animate={{ scale: isExpanded ? 1 : 1.1 }} />
+                <motion.h1 className="font-bold text-2xl text-white" variants={textVariants}>
+                    {isExpanded && "Wemsc"}
+                </motion.h1>
             </div>
 
-        
+            {/* Navigation */}
             <div className="flex flex-col gap-8">
                 {["FEATURES", "LIBRARY"].map((section) => (
                     <div key={section} className="flex flex-col">
@@ -130,8 +114,10 @@ function LeftSidebar() {
 
             {/* Toggle button */}
             <motion.div
-                className="absolute right-[-1.8rem] top-1/2 transform -translate-y-1/2 w-10 h-10 bg-gradient-to-r from-gray-700 to-gray-900 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition border border-gray-600 shadow-lg z-10"
+                className="absolute right-[-0.9rem] top-1/2 transform -translate-y-1/2 w-10 h-10 bg-gradient-to-r from-gray-700 to-gray-900 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition border border-gray-600 shadow-lg z-20" // Adjusted right and z-index
                 onClick={toggleSidebar}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
             >
                 <AnimatePresence mode="wait">
                     <motion.div
@@ -141,7 +127,7 @@ function LeftSidebar() {
                         exit={{ opacity: 0, rotate: isExpanded ? 90 : -90 }}
                         transition={{ duration: 0.2 }}
                     >
-                        {isExpanded ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+                        {isExpanded ? <ChevronLeft size={18} color="#fff" /> : <ChevronRight size={18} color="#fff" />}
                     </motion.div>
                 </AnimatePresence>
             </motion.div>

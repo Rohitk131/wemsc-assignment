@@ -1,57 +1,147 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Volume2, Maximize2, Heart, List } from 'lucide-react';
+
+const AUDIO_URL = "/Wavy.mp3";
 
 const Player = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(180); // 3 minutes in seconds
+  const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(70);
   const [isHovered, setIsHovered] = useState(false);
+  const [isDraggingTimeline, setIsDraggingTimeline] = useState(false);
+  const [isDraggingVolume, setIsDraggingVolume] = useState(false);
 
-  // Simulating time update when playing
+  const audioRef = useRef(new Audio(AUDIO_URL));
+  const timelineRef = useRef(null);
+  const volumeRef = useRef(null);
+
+
   useEffect(() => {
-    let interval;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        setCurrentTime((prev) => {
-          if (prev >= duration) {
-            setIsPlaying(false);
-            return 0;
-          }
-          return prev + 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isPlaying, duration]);
+    const audio = audioRef.current;
+    audio.volume = volume / 100;
 
-  // Format time in mm:ss
+    const setAudioData = () => {
+      setDuration(audio.duration);
+      setCurrentTime(audio.currentTime);
+    };
+
+    const setAudioTime = () => {
+      if (!isDraggingTimeline) {
+        setCurrentTime(audio.currentTime);
+      }
+    };
+
+    audio.addEventListener('loadedmetadata', setAudioData);
+    audio.addEventListener('timeupdate', setAudioTime);
+
+    return () => {
+      audio.pause();
+      audio.removeEventListener('loadedmetadata', setAudioData);
+      audio.removeEventListener('timeupdate', setAudioTime);
+    };
+  }, [isDraggingTimeline]);
+
+ 
+  useEffect(() => {
+    if (isPlaying) {
+      audioRef.current.play().catch(error => console.error("Error playing audio:", error));
+    } else {
+      audioRef.current.pause();
+    }
+  }, [isPlaying]);
+
+
+  useEffect(() => {
+    audioRef.current.volume = volume / 100;
+  }, [volume]);
+
+ 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs < 10 ? '0' + secs : secs}`;
   };
 
-  // Toggle play/pause
   const togglePlay = () => setIsPlaying(!isPlaying);
 
-  // Handle progress bar click
-  const handleProgressClick = (e) => {
-    const rect = e.target.getBoundingClientRect();
+  const handleTimelineMouseDown = (e) => {
+    setIsDraggingTimeline(true);
+    updateTimelinePosition(e);
+  };
+
+  const handleTimelineMouseMove = (e) => {
+    if (isDraggingTimeline) {
+      updateTimelinePosition(e);
+    }
+  };
+
+  const handleTimelineMouseUp = () => {
+    if (isDraggingTimeline) {
+      setIsDraggingTimeline(false);
+    }
+  };
+
+  const updateTimelinePosition = (e) => {
+    const rect = timelineRef.current.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const width = rect.width;
-    const newTime = (clickX / width) * duration;
+    const newTime = Math.min(Math.max((clickX / width) * duration, 0), duration);
+    audioRef.current.currentTime = newTime;
     setCurrentTime(newTime);
   };
 
-  // Handle volume change
-  const handleVolumeClick = (e) => {
-    const rect = e.target.getBoundingClientRect();
+  const handleVolumeMouseDown = (e) => {
+    setIsDraggingVolume(true);
+    updateVolumePosition(e);
+  };
+
+  const handleVolumeMouseMove = (e) => {
+    if (isDraggingVolume) {
+      updateVolumePosition(e);
+    }
+  };
+
+  const handleVolumeMouseUp = () => {
+    if (isDraggingVolume) {
+      setIsDraggingVolume(false);
+    }
+  };
+
+  const updateVolumePosition = (e) => {
+    const rect = volumeRef.current.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const width = rect.width;
     const newVolume = Math.min(Math.max((clickX / width) * 100, 0), 100);
     setVolume(newVolume);
+  };
+
+  
+  useEffect(() => {
+    document.addEventListener('mousemove', handleTimelineMouseMove);
+    document.addEventListener('mouseup', handleTimelineMouseUp);
+    document.addEventListener('mousemove', handleVolumeMouseMove);
+    document.addEventListener('mouseup', handleVolumeMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleTimelineMouseMove);
+      document.removeEventListener('mouseup', handleTimelineMouseUp);
+      document.removeEventListener('mousemove', handleVolumeMouseMove);
+      document.removeEventListener('mouseup', handleVolumeMouseUp);
+    };
+  }, [isDraggingTimeline, isDraggingVolume]);
+
+  const skipForward = () => {
+    const newTime = Math.min(audioRef.current.currentTime + 10, duration);
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
+  const skipBackward = () => {
+    const newTime = Math.max(audioRef.current.currentTime - 10, 0);
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
   };
 
   return (
@@ -59,7 +149,7 @@ const Player = () => {
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 100 }}
-      className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-r from-gray-900 via-black to-gray-900 border-t border-gray-800/50 px-6 flex items-center shadow-lg z-50"
+      className="fixed bottom-0 left-0 right-0 h-20 rounded-t-2xl bg-gradient-to-r from-gray-900 via-black to-gray-900 border-t border-gray-800/50 px-6 flex items-center shadow-lg z-50"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -105,7 +195,7 @@ const Player = () => {
           <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
             <Shuffle size={18} className="text-gray-400 hover:text-white cursor-pointer" />
           </motion.div>
-          <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
+          <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }} onClick={skipBackward}>
             <SkipBack size={18} className="text-gray-400 hover:text-white cursor-pointer" />
           </motion.div>
           <motion.button
@@ -136,7 +226,7 @@ const Player = () => {
               )}
             </AnimatePresence>
           </motion.button>
-          <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
+          <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }} onClick={skipForward}>
             <SkipForward size={18} className="text-gray-400 hover:text-white cursor-pointer" />
           </motion.div>
           <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
@@ -151,7 +241,11 @@ const Player = () => {
           transition={{ duration: 0.2 }}
         >
           <span className="text-xs text-gray-300 w-10 text-right">{formatTime(currentTime)}</span>
-          <div className="mx-3 flex-1 group relative" onClick={handleProgressClick}>
+          <div
+            ref={timelineRef}
+            className="mx-3 flex-1 group relative cursor-pointer"
+            onMouseDown={handleTimelineMouseDown}
+          >
             <motion.div
               className="h-1 bg-gray-700/50 rounded-full overflow-hidden"
               whileHover={{ height: 4 }}
@@ -159,9 +253,9 @@ const Player = () => {
             >
               <motion.div
                 className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
-                style={{ width: `${(currentTime / duration) * 100}%` }}
+                style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
                 initial={false}
-                animate={{ width: `${(currentTime / duration) * 100}%` }}
+                animate={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
                 transition={{ duration: 0.2 }}
               >
                 <motion.div
@@ -187,8 +281,9 @@ const Player = () => {
             <Volume2 size={18} className="text-gray-400" />
           </motion.div>
           <motion.div
-            className="w-24 hidden md:block relative"
-            onClick={handleVolumeClick}
+            ref={volumeRef}
+            className="w-24 hidden md:block relative cursor-pointer"
+            onMouseDown={handleVolumeMouseDown}
             whileHover={{ scale: 1.05 }}
           >
             <div className="h-1 bg-gray-700/50 rounded-full overflow-hidden">

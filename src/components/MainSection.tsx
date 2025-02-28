@@ -23,7 +23,7 @@ const MainSection = () => {
       transition={{ duration: 0.5 }}
       className="flex-1 overflow-y-scroll p-4 md:p-8 bg-gradient-to-br from-gray-900 via-black to-gray-950 text-white"
     >
-      {/* Navigation Controls */}
+    
       <motion.div
         className="flex items-center gap-4 mb-8"
         initial={{ y: -20 }}
@@ -47,7 +47,7 @@ const MainSection = () => {
         </div>
       </motion.div>
 
-      {/* Featured Album Banner */}
+  
       <motion.div
         whileHover={{ scale: 1.02 }}
         className="relative  rounded-2xl p-6 mb-10 overflow-hidden"
@@ -99,16 +99,14 @@ const MainSection = () => {
         </div>
       </motion.div>
 
-      {/* Hello User Section */}
+  
       <Section title="Hello, Luca" items={todaysHits} />
 
-      {/* New Releases Section */}
       <Section title="New Releases for You" items={newReleases} />
     </motion.div>
   );
 };
 
-// Reusable Section Component
 const Section = ({ title, items }) => (
   <motion.div
     className="mb-12"
