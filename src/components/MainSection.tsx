@@ -3,17 +3,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 
 const todaysHits = [
-  { id: 1, title: "Aaj Ki Raat", description: "From Stree 2 - Sachin-Jigar", image: "/api/placeholder/200/200" },
-  { id: 2, title: "Tauba Tauba", description: "From Bad Newz - Karan Aujla", image: "/api/placeholder/200/200" },
-  { id: 3, title: "Mere Dholna 3.0", description: "From Bhool Bhulaiyaa 3 - Sonu Nigam", image: "/api/placeholder/200/200" },
-  { id: 4, title: "Chal Kudiye", description: "Diljit Dosanjh ft. Badshah", image: "/api/placeholder/200/200" },
+  { id: 1, title: "Limitless", description: "From Can't Rush Greatness - Central Cee", image: "https://i.scdn.co/image/ab67616d0000b2735609b89507db8644ff7e1e7a" },
+  { id: 2, title: "Tauba Tauba", description: "From Bad Newz - Karan Aujla", image: "https://i.scdn.co/image/ab67616d0000b27344d3ba1bb25084d20dc66d52" },
+  { id: 3, title: "Mere Dholna 3.0", description: "From Bhool Bhulaiyaa - Pritam", image: "https://i.scdn.co/image/ab67616d0000b2734cfe2d352da6d7910961377f" },
+  { id: 4, title: "Chal Kudiye", description: "Diljit Dosanjh ft. Badshah", image: "https://i.scdn.co/image/ab67616d0000b273bbeee746c016a99ef1662b4b" },
 ];
 
 const newReleases = [
-  { id: 1, title: "Khoobsurat", artist: "Vishal Mishra", image: "/api/placeholder/150/150" },
-  { id: 2, title: "Sajni", artist: "Arijit Singh", image: "/api/placeholder/150/150" },
-  { id: 3, title: "Millionaire", artist: "Yo Yo Honey Singh", image: "/api/placeholder/150/150" },
-  { id: 4, title: "Jo Tum Mere Ho", artist: "Anuv Jain", image: "/api/placeholder/150/150" },
+  { id: 1, title: "Khoobsurat", artist: "Vishal Mishra", image: "https://i.scdn.co/image/ab67616d0000b273dd5eaafc5f4075139d7f34b4" },
+  { id: 2, title: "Sajni", artist: "Arijit Singh", image: "https://i.scdn.co/image/ab67616d0000b273d5f4378b1ffc9119fdc7306d" },
+  { id: 3, title: "Millionaire", artist: "Yo Yo Honey Singh", image: "https://i.scdn.co/image/ab67616d0000b273aad3f4b601ae8763b3fc4e88" },
+  { id: 4, title: "Jo Tum Mere Ho", artist: "Anuv Jain", image: "https://i.scdn.co/image/ab67616d0000b27372a77d038887cdc425f5ee55" },
 ];
 const MainSection = () => {
   return (
@@ -135,7 +135,7 @@ const Section = ({ title, items }) => (
           <motion.div
             key={item.id}
             layout
-            whileHover={{ scale: 1.05, rotate: 1 }}
+            whileHover={{ scale: 1.05, rotate: 0 }}
             whileTap={{ scale: 0.98 }}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}

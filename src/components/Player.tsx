@@ -80,9 +80,9 @@ const Player = () => {
             className="text-sm font-semibold text-white truncate max-w-[150px]"
             whileHover={{ color: '#3b82f6' }}
           >
-            Date
+            Wavy
           </motion.div>
-          <div className="text-xs text-gray-400">あいうえお</div>
+          <div className="text-xs text-gray-400">Karan Aujla</div>
         </div>
         <div className="flex items-center ml-4 gap-3">
           <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
