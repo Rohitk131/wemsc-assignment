@@ -50,12 +50,13 @@ const MainSection = () => {
       {/* Featured Album Banner */}
       <motion.div
         whileHover={{ scale: 1.02 }}
-        className="relative bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 rounded-2xl p-6 mb-10 overflow-hidden"
+        className="relative  rounded-2xl p-6 mb-10 overflow-hidden"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <div className="absolute inset-0 bg-black/20 backdrop-blur-sm z-0" />
+        <img src="/cover.avif" className='absolute inset-0'/>
+       
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 mb-6 md:mb-0">
             <motion.span
@@ -64,7 +65,7 @@ const MainSection = () => {
               transition={{ delay: 0.5 }}
               className="text-sm font-semibold uppercase tracking-wider text-pink-200"
             >
-              New Album
+              New Alumn
             </motion.span>
             <motion.h2
               initial={{ y: 20, opacity: 0 }}
@@ -72,9 +73,9 @@ const MainSection = () => {
               transition={{ delay: 0.6 }}
               className="text-3xl md:text-4xl font-extrabold mb-3 leading-tight"
             >
-              THE SECOND STEP:<br />CHAPTER ONE
+              KOD 
             </motion.h2>
-            <p className="text-gray-200 font-medium mb-4">TREASURE</p>
+            <p className="text-gray-200 font-medium mb-4">J. COLE</p>
             <motion.button
               whileHover={{ scale: 1.05, backgroundColor: '#3b82f6' }}
               whileTap={{ scale: 0.95 }}
@@ -87,19 +88,19 @@ const MainSection = () => {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.7, type: 'spring', stiffness: 100 }}
-            className="w-full md:w-1/2 flex justify-center md:justify-end"
+            className="w-full md:w-1/2 flex justify-center md:justify-end "
           >
             <img
-              src="/api/placeholder/300/300"
+              src="https://upload.wikimedia.org/wikipedia/en/d/d3/JColeKOD.jpg"
               alt="TREASURE Album"
-              className="h-48 md:h-56 object-contain drop-shadow-2xl"
+              className="h-48 md:h-56 object-contain drop-shadow-2xl rounded-2xl border-8 border-gray-100/30"
             />
           </motion.div>
         </div>
       </motion.div>
 
       {/* Hello User Section */}
-      <Section title="Hello, Woilon" items={todaysHits} />
+      <Section title="Hello, Luca" items={todaysHits} />
 
       {/* New Releases Section */}
       <Section title="New Releases for You" items={newReleases} />

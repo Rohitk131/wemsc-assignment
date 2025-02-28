@@ -71,7 +71,7 @@ const Player = () => {
         transition={{ delay: 0.2 }}
       >
         <img
-          src="/api/placeholder/50/50"
+          src="https://i.scdn.co/image/ab67616d00004851e34f05599c4a42e1cbb1c251"
           alt="Current track"
           className="h-12 w-12 object-cover rounded-lg shadow-md"
         />

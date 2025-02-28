@@ -7,7 +7,7 @@ interface SectionProps {
     title: string;
     subtitle: string;
     time: string;
-    gradientClass: string;
+    imageUrl: string;
   }[];
   isPlaylist?: boolean;
 }
@@ -25,7 +25,7 @@ const Section: React.FC<SectionProps> = ({ title, items, isPlaylist = false }) =
             title={item.title}
             subtitle={item.subtitle}
             time={item.time}
-            gradientClass={item.gradientClass}
+            imageUrl={item.imageUrl}
             isPlaylist={isPlaylist}
           />
         ))}
