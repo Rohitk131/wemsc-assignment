@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const todaysHits = [
   { id: 1, title: "Limitless", description: "From Can't Rush Greatness - Central Cee", image: "https://i.scdn.co/image/ab67616d0000b2735609b89507db8644ff7e1e7a" },
@@ -36,7 +36,7 @@ const MainSection = () => {
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
           <ChevronRight className="cursor-pointer text-gray-300 hover:text-white" />
         </motion.div>
-        <div className="relative flex-1 max-w-md hidden md:block">
+        <div className="relative flex-1 max-w-md ">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
           <motion.input
             whileFocus={{ scale: 1.02, boxShadow: '0 0 15px rgba(59, 130, 246, 0.3)' }}
@@ -107,7 +107,12 @@ const MainSection = () => {
   );
 };
 
-const Section = ({ title, items }) => (
+interface SectionProps {
+  title: string;
+  items: { id: number; title: string; description?: string; artist?: string; image: string }[];
+}
+
+const Section: React.FC<SectionProps> = ({ title, items }) => (
   <motion.div
     className="mb-12"
     initial={{ opacity: 0, y: 20 }}
