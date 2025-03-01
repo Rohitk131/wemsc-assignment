@@ -14,11 +14,24 @@ const Player: React.FC = () => {
   const [isDraggingVolume, setIsDraggingVolume] = useState(false);
   const [showMobileVolume, setShowMobileVolume] = useState(false);
 
-  const audioRef = useRef<HTMLAudioElement>(new Audio(AUDIO_URL));
+  // Initialize audioRef as null
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
   const volumeRef = useRef<HTMLDivElement>(null);
 
+  // Create audio element only on client side
   useEffect(() => {
+    audioRef.current = new Audio(AUDIO_URL);
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!audioRef.current) return;
     const audio = audioRef.current;
 
     const setAudioData = () => {
@@ -45,6 +58,7 @@ const Player: React.FC = () => {
   }, [isDraggingTimeline]);
 
   useEffect(() => {
+    if (!audioRef.current) return;
     const audio = audioRef.current;
     const playAudio = async () => {
       try {
@@ -62,6 +76,7 @@ const Player: React.FC = () => {
   }, [isPlaying]);
 
   useEffect(() => {
+    if (!audioRef.current) return;
     audioRef.current.volume = volume / 100;
   }, [volume]);
 
@@ -88,7 +103,7 @@ const Player: React.FC = () => {
     setIsDraggingTimeline(false);
     if (isPlaying) {
       // Ensure the audio plays after dragging
-      audioRef.current.play().catch(error => {
+      audioRef.current?.play().catch(error => {
         console.error("Error resuming playback:", error);
         setIsPlaying(false); // Fallback to pause state if play fails
       });
@@ -96,7 +111,7 @@ const Player: React.FC = () => {
   };
 
   const updateTimelinePosition = (clientX: number) => {
-    if (!timelineRef.current) return;
+    if (!timelineRef.current || !audioRef.current) return;
 
     const rect = timelineRef.current.getBoundingClientRect();
     const clickX = Math.max(0, Math.min(clientX - rect.left, rect.width));
@@ -137,11 +152,7 @@ const Player: React.FC = () => {
     updateMobileVolumePosition(e.touches[0].clientY);
   };
 
-  const handleMobileVolumeTouchMove = (e: TouchEvent) => {
-    if (isDraggingVolume) {
-      updateMobileVolumePosition(e.touches[0].clientY);
-    }
-  };
+  
 
   const handleMobileVolumeTouchEnd = () => {
     setIsDraggingVolume(false);
@@ -188,12 +199,14 @@ const Player: React.FC = () => {
   }, [isDraggingTimeline, isDraggingVolume]);
 
   const skipForward = () => {
+    if (!audioRef.current) return;
     const newTime = Math.min(audioRef.current.currentTime + 10, duration);
     audioRef.current.currentTime = newTime;
     setCurrentTime(newTime);
   };
 
   const skipBackward = () => {
+    if (!audioRef.current) return;
     const newTime = Math.max(audioRef.current.currentTime - 10, 0);
     audioRef.current.currentTime = newTime;
     setCurrentTime(newTime);
