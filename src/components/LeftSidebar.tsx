@@ -4,7 +4,7 @@ import Playlist01Icon from '../../public/Icons/playlistIcon';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function LeftSidebar() {
-    const [isExpanded, setIsExpanded] = useState(true);
+    const [isExpanded, setIsExpanded] = useState(false); // Collapsed by default on mobile
 
     const toggleSidebar = () => {
         setIsExpanded(!isExpanded);
@@ -48,7 +48,7 @@ function LeftSidebar() {
             transition: { type: "spring", stiffness: 300, damping: 30 }
         },
         collapsed: {
-            width: "100%", // Adjusted from "300%" to fit better
+            width: "100%",
             display: "flex",
             justifyContent: "center",
             transition: { type: "spring", stiffness: 300, damping: 30 }
@@ -57,9 +57,9 @@ function LeftSidebar() {
 
     return (
         <motion.div
-            className="bg-black p-6 hidden md:flex flex-col relative" // Removed overflow-hidden
+            className="bg-black p-4 md:p-6 flex flex-col relative"
             variants={sidebarVariants}
-            initial="expanded"
+            initial="collapsed"
             animate={isExpanded ? "expanded" : "collapsed"}
         >
             {/* Header */}
@@ -114,7 +114,7 @@ function LeftSidebar() {
 
             {/* Toggle button */}
             <motion.div
-                className="absolute right-[-0.9rem] top-1/2 transform -translate-y-1/2 w-10 h-10 bg-gradient-to-r from-gray-700 to-gray-900 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition border border-gray-600 shadow-lg z-20" // Adjusted right and z-index
+                className="absolute right-[-0.9rem] top-1/2 transform -translate-y-1/2 w-10 h-10 bg-gradient-to-r from-gray-700 to-gray-900 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition border border-gray-600 shadow-lg z-20"
                 onClick={toggleSidebar}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}

@@ -1,5 +1,6 @@
-import Section from "./SectionCard";
+import React from 'react';
 import { BellDot, ChevronDown } from 'lucide-react';
+import Section from "./SectionCard";
 
 function RightSidebar() {
   const recentlyPlayed = [
@@ -65,7 +66,7 @@ function RightSidebar() {
   ];
 
   return (
-    <div className="w-72 bg-black p-6 border-l border-gray-800 hidden lg:block h-screen flex flex-col">
+    <div className="w-72 bg-black p-4 md:p-6 border-l border-gray-800 hidden lg:block h-screen flex flex-col">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center">
           <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">

@@ -4,7 +4,7 @@ import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Volume2, Maximize2
 
 const AUDIO_URL = "/Wavy.mp3";
 
-const Player = () => {
+const Player: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -12,15 +12,14 @@ const Player = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [isDraggingTimeline, setIsDraggingTimeline] = useState(false);
   const [isDraggingVolume, setIsDraggingVolume] = useState(false);
+  const [showMobileVolume, setShowMobileVolume] = useState(false);
 
-  const audioRef = useRef<HTMLAudioElement | null>(typeof window !== 'undefined' ? new Audio(AUDIO_URL) : null);
+  const audioRef = useRef<HTMLAudioElement>(new Audio(AUDIO_URL));
   const timelineRef = useRef<HTMLDivElement>(null);
   const volumeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!audioRef.current) return;
     const audio = audioRef.current;
-    audio.volume = volume / 100;
 
     const setAudioData = () => {
       setDuration(audio.duration);
@@ -35,136 +34,169 @@ const Player = () => {
 
     audio.addEventListener('loadedmetadata', setAudioData);
     audio.addEventListener('timeupdate', setAudioTime);
+    audio.addEventListener('ended', () => setIsPlaying(false));
 
     return () => {
       audio.pause();
       audio.removeEventListener('loadedmetadata', setAudioData);
       audio.removeEventListener('timeupdate', setAudioTime);
+      audio.removeEventListener('ended', () => setIsPlaying(false));
     };
   }, [isDraggingTimeline]);
 
   useEffect(() => {
-    if (!audioRef.current) return;
     const audio = audioRef.current;
-    if (isPlaying && audio.paused) {
-      audio.play().catch(error => console.error("Error playing audio:", error));
-    } else if (!isPlaying && !audio.paused) {
-      audio.pause();
-    }
+    const playAudio = async () => {
+      try {
+        if (isPlaying) {
+          await audio.play();
+        } else {
+          audio.pause();
+        }
+      } catch (error) {
+        console.error("Error playing audio:", error);
+        setIsPlaying(false);
+      }
+    };
+    playAudio();
   }, [isPlaying]);
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume / 100;
-    }
+    audioRef.current.volume = volume / 100;
   }, [volume]);
 
-  const formatTime = (seconds: number) => {
+  const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs < 10 ? '0' + secs : secs}`;
   };
 
-  const togglePlay = () => setIsPlaying(!isPlaying);
+  const togglePlay = () => setIsPlaying(prev => !prev);
 
   const handleTimelineMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsDraggingTimeline(true);
-    updateTimelinePosition(e as unknown as MouseEvent);
+    updateTimelinePosition(e.clientX);
   };
 
   const handleTimelineMouseMove = (e: MouseEvent) => {
     if (isDraggingTimeline) {
-      updateTimelinePosition(e);
+      updateTimelinePosition(e.clientX);
     }
   };
 
   const handleTimelineMouseUp = () => {
-    if (isDraggingTimeline) {
-      setIsDraggingTimeline(false);
+    setIsDraggingTimeline(false);
+    if (isPlaying) {
+      // Ensure the audio plays after dragging
+      audioRef.current.play().catch(error => {
+        console.error("Error resuming playback:", error);
+        setIsPlaying(false); // Fallback to pause state if play fails
+      });
     }
   };
 
-  const updateTimelinePosition = (e: MouseEvent) => {
+  const updateTimelinePosition = (clientX: number) => {
     if (!timelineRef.current) return;
-    
+
     const rect = timelineRef.current.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const width = rect.width;
-    const newTime = Math.min(Math.max((clickX / width) * duration, 0), duration);
-    
+    const clickX = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    const newTime = (clickX / rect.width) * duration;
+
     setCurrentTime(newTime);
-    
-    if (audioRef.current) {
-      audioRef.current.currentTime = newTime;
-      if (isPlaying && audioRef.current.paused) {
-        audioRef.current.play().catch(error => console.error("Error playing audio:", error));
-      }
-    }
+    audioRef.current.currentTime = newTime;
   };
 
   const handleVolumeMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsDraggingVolume(true);
-    updateVolumePosition(e as unknown as MouseEvent);
+    updateVolumePosition(e.clientX);
   };
 
   const handleVolumeMouseMove = (e: MouseEvent) => {
     if (isDraggingVolume) {
-      updateVolumePosition(e);
+      updateVolumePosition(e.clientX);
     }
   };
 
   const handleVolumeMouseUp = () => {
+    setIsDraggingVolume(false);
+    setShowMobileVolume(false);
+  };
+
+  const updateVolumePosition = (clientX: number) => {
+    if (!volumeRef.current) return;
+
+    const rect = volumeRef.current.getBoundingClientRect();
+    const clickX = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    const newVolume = (clickX / rect.width) * 100;
+    setVolume(newVolume);
+  };
+
+  // Mobile volume handler
+  const handleMobileVolumeTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    setIsDraggingVolume(true);
+    updateMobileVolumePosition(e.touches[0].clientY);
+  };
+
+  const handleMobileVolumeTouchMove = (e: TouchEvent) => {
     if (isDraggingVolume) {
-      setIsDraggingVolume(false);
+      updateMobileVolumePosition(e.touches[0].clientY);
     }
   };
 
-  const updateVolumePosition = (e: MouseEvent) => {
+  const handleMobileVolumeTouchEnd = () => {
+    setIsDraggingVolume(false);
+    setShowMobileVolume(false);
+  };
+
+  const updateMobileVolumePosition = (clientY: number) => {
     if (!volumeRef.current) return;
-    
+
     const rect = volumeRef.current.getBoundingClientRect();
-    
-    if (window.innerWidth >= 768) {
-      const clickX = e.clientX - rect.left;
-      const width = rect.width;
-      const newVolume = Math.min(Math.max((clickX / width) * 100, 0), 100);
-      setVolume(newVolume);
-    } else {
-      const clickY = e.clientY - rect.top;
-      const height = rect.height;
-      const newVolume = 100 - Math.min(Math.max((clickY / height) * 100, 0), 100);
-      setVolume(newVolume);
-    }
+    const clickY = Math.max(0, Math.min(clientY - rect.top, rect.height));
+    const newVolume = 100 - (clickY / rect.height) * 100; // Inverted because it's vertical
+    setVolume(newVolume);
   };
 
   useEffect(() => {
-    document.addEventListener('mousemove', handleTimelineMouseMove);
-    document.addEventListener('mouseup', handleTimelineMouseUp);
-    document.addEventListener('mousemove', handleVolumeMouseMove);
-    document.addEventListener('mouseup', handleVolumeMouseUp);
+    const handleMouseMove = (e: MouseEvent) => {
+      handleTimelineMouseMove(e);
+      handleVolumeMouseMove(e);
+    };
+
+    const handleMouseUp = () => {
+      handleTimelineMouseUp();
+      handleVolumeMouseUp();
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isDraggingVolume) {
+        updateMobileVolumePosition(e.touches[0].clientY);
+      }
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleMobileVolumeTouchEnd);
 
     return () => {
-      document.removeEventListener('mousemove', handleTimelineMouseMove);
-      document.removeEventListener('mouseup', handleTimelineMouseUp);
-      document.removeEventListener('mousemove', handleVolumeMouseMove);
-      document.removeEventListener('mouseup', handleVolumeMouseUp);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleMobileVolumeTouchEnd);
     };
   }, [isDraggingTimeline, isDraggingVolume]);
 
   const skipForward = () => {
-    if (audioRef.current) {
-      const newTime = Math.min(audioRef.current.currentTime + 10, duration);
-      audioRef.current.currentTime = newTime;
-      setCurrentTime(newTime);
-    }
+    const newTime = Math.min(audioRef.current.currentTime + 10, duration);
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
   };
 
   const skipBackward = () => {
-    if (audioRef.current) {
-      const newTime = Math.max(audioRef.current.currentTime - 10, 0);
-      audioRef.current.currentTime = newTime;
-      setCurrentTime(newTime);
-    }
+    const newTime = Math.max(audioRef.current.currentTime - 10, 0);
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
   };
 
   return (
@@ -300,14 +332,13 @@ const Player = () => {
         transition={{ delay: 0.2 }}
       >
         <div className="flex items-center gap-2">
-          <motion.div 
-            whileHover={{ scale: 1.2 }} 
-            whileTap={{ scale: 0.9 }}
-            className="relative flex items-center gap-2"
-          >
-            <Volume2 
-              className="text-gray-400 w-4 h-4 md:w-[18px] md:h-[18px] cursor-pointer" 
-              onClick={() => setVolume(volume === 0 ? 70 : 0)}
+          <motion.div className="relative flex items-center gap-2">
+            <Volume2
+              className="text-gray-400 w-4 h-4 md:w-[18px] md:h-[18px] cursor-pointer"
+              onClick={() => {
+                setShowMobileVolume(prev => !prev); // Toggle mobile volume popup
+                setVolume(volume === 0 ? 70 : 0);
+              }}
             />
             {/* Desktop Volume Slider */}
             <motion.div
@@ -320,32 +351,33 @@ const Player = () => {
                 style={{ width: `${volume}%` }}
                 animate={{ width: `${volume}%` }}
                 transition={{ duration: 0.2 }}
-              >
-                <motion.div
-                  className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100"
-                  transition={{ duration: 0.2 }}
-                />
-              </motion.div>
+              />
             </motion.div>
-
             {/* Mobile Volume Popup */}
-            <motion.div 
-              className="md:hidden absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-gray-900/95 rounded-lg shadow-lg hidden group-active:block"
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0 }}
-            >
-              <div 
-                ref={volumeRef}
-                className="h-24 w-2 bg-gray-700/50 rounded-full overflow-hidden relative cursor-pointer"
-                onMouseDown={handleVolumeMouseDown}
-              >
-                <div 
-                  className="absolute bottom-0 left-0 right-0 bg-blue-500 rounded-full"
-                  style={{ height: `${volume}%` }}
-                />
-              </div>
-            </motion.div>
+            <AnimatePresence>
+              {showMobileVolume && (
+                <motion.div
+                  className="md:hidden absolute bottom-full left-6 -translate-x-1/2 mb-2 p-2  bg-gray-900/95 rounded-lg shadow-lg z-50"
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div
+                    ref={volumeRef}
+                    className="h-24 w-2 bg-gray-700/50 rounded-full overflow-hidden relative cursor-pointer"
+                    onTouchStart={handleMobileVolumeTouchStart}
+                  >
+                    <motion.div
+                      className="absolute bottom-0 left-0 right-0 bg-blue-500 rounded-full"
+                      style={{ height: `${volume}%` }}
+                      animate={{ height: `${volume}%` }}
+                      transition={{ duration: 0.2 }}
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </div>
         <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }} className="hidden md:block">

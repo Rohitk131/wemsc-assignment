@@ -31,13 +31,13 @@ const MainSection = () => {
           <input
             type="text"
             placeholder="Search for artists, songs, or albums"
-            className="w-full bg-gray-800/50 backdrop-blur-md text-gray-200 rounded-full py-3 pl-12 pr-4 border border-gray-700/50 focus:outline-none focus:border-blue-500 transition-all duration-300"
+            className="w-full bg-gray-800/50 backdrop-blur-md text-gray-200 rounded-full py-2 md:py-3 pl-12 pr-4 border border-gray-700/50 focus:outline-none focus:border-blue-500 transition-all duration-300"
           />
         </div>
       </div>
 
       <motion.div
-        className="relative rounded-2xl p-6 mb-10 overflow-hidden flex flex-col md:flex-row items-center"
+        className="relative rounded-2xl p-4 md:p-6 mb-8 md:mb-10 overflow-hidden flex flex-col md:flex-row items-center"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
@@ -45,7 +45,7 @@ const MainSection = () => {
         <img src="/cover.avif" className="absolute inset-0 w-full h-full object-cover opacity-90" />
         <div className="relative z-10 text-center md:text-left md:w-1/2">
           <span className="text-sm font-semibold uppercase tracking-wider text-pink-200">New Album</span>
-          <h2 className="text-3xl md:text-4xl font-extrabold mb-3 leading-tight">KOD</h2>
+          <h2 className="text-2xl md:text-4xl font-extrabold mb-3 leading-tight">KOD</h2>
           <p className="text-gray-200 font-medium mb-4">J. COLE</p>
           <button className="bg-blue-500 text-white py-2 px-6 rounded-full font-semibold uppercase tracking-wide">Listen Now</button>
         </div>
@@ -53,7 +53,7 @@ const MainSection = () => {
           <img
             src="https://upload.wikimedia.org/wikipedia/en/d/d3/JColeKOD.jpg"
             alt="KOD Album"
-            className="h-40 md:h-56 object-cover drop-shadow-2xl rounded-2xl border-4 border-gray-100/30"
+            className="h-32 md:h-56 object-cover drop-shadow-2xl rounded-2xl border-4 border-gray-100/30"
           />
         </div>
       </motion.div>
@@ -70,12 +70,12 @@ interface SectionProps {
 }
 
 const Section: React.FC<SectionProps> = ({ title, items }) => (
-  <motion.div className="mb-12" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-    <div className="flex justify-between items-center mb-6">
-      <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{title}</h2>
+  <motion.div className="mb-8 md:mb-12" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+    <div className="flex justify-between items-center mb-4 md:mb-6">
+      <h2 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{title}</h2>
       <button className="text-sm text-gray-400 transition-colors hover:text-white">See All</button>
     </div>
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
       <AnimatePresence>
         {items.map((item) => (
           <motion.div
@@ -87,7 +87,7 @@ const Section: React.FC<SectionProps> = ({ title, items }) => (
             className="bg-gray-800/70 backdrop-blur-lg rounded-xl overflow-hidden shadow-lg"
           >
             <img src={item.image} alt={item.title} className="w-full aspect-square object-cover" />
-            <div className="p-4">
+            <div className="p-3 md:p-4">
               <h3 className="font-semibold text-sm text-white truncate">{item.title}</h3>
               <p className="text-gray-400 text-xs mt-1">{item.description || item.artist}</p>
             </div>
