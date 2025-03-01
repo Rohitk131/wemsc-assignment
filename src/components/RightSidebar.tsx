@@ -88,7 +88,7 @@ function RightSidebar() {
       </div>
 
       <Section title="Recently Played" items={recentlyPlayed} />
-      <Section title="My Playlist" items={myPlaylists} isPlaylist />
+      <Section title="My Playlist" items={myPlaylists}  />
 
       <button className="w-full bg-gray-800 text-white py-3 rounded-md hover:bg-gray-700 transition-colors text-sm font-medium mb-6">
         Create New Playlist

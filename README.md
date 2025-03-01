@@ -14,7 +14,7 @@ Wemsc is a modern, minimalistic music streaming application built with **Next.js
 
 
 ## 📸 Screenshots
-![Wemsc Music Streaming App](./screenshot.png) 
+![Wemsc Music Streaming App]('https://raw.githubusercontent.com/Rohitk131/wemsc-assignment/refs/heads/main/public/screenshot.png?token=GHSAT0AAAAAAC3MSSNK5UKMTPLL4COAZKCWZ6CX7HQ') 
 
 ## 🏗️ Installation & Setup
 1. **Clone the repository**
