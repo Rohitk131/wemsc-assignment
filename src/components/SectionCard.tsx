@@ -9,10 +9,10 @@ interface SectionProps {
     time: string;
     imageUrl: string;
   }[];
-  isPlaylist?: boolean;
+ 
 }
 
-const Section: React.FC<SectionProps> = ({ title, items, isPlaylist }) => (
+const Section: React.FC<SectionProps> = ({ title, items}) => (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-sm font-bold text-white">{title}</h3>
