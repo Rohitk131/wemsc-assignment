@@ -64,7 +64,12 @@ const MainSection = () => {
   );
 };
 
-const Section = ({ title, items }) => (
+interface SectionProps {
+  title: string;
+  items: { id: number; title: string; description?: string; artist?: string; image: string }[];
+}
+
+const Section: React.FC<SectionProps> = ({ title, items }) => (
   <motion.div className="mb-12" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
     <div className="flex justify-between items-center mb-6">
       <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{title}</h2>
